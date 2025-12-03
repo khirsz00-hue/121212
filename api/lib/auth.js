@@ -27,12 +27,17 @@ export async function verifyAuth(req) {
     const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
     
     if (error || !user) {
-      throw new Error('Invalid token');
+      throw new Error('Invalid or expired token');
+    }
+
+    // Additional verification: check if user exists and is not deleted
+    if (!user.id || user.aud !== 'authenticated') {
+      throw new Error('Invalid user authentication');
     }
 
     return user;
   } catch (error) {
-    throw new Error('Authentication failed');
+    throw new Error('Authentication failed: ' + error.message);
   }
 }
 

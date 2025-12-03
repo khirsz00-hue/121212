@@ -123,6 +123,11 @@ curl "https://your-domain.vercel.app/api/setup?secret=YOUR_SETUP_SECRET"
 
 This will return the SQL. Copy it and run in Supabase SQL Editor.
 
+**IMPORTANT SECURITY NOTE**: After running the setup, you should disable or delete the `/api/setup.js` endpoint to prevent unauthorized database modifications. You can do this by:
+1. Deleting the file from your repository
+2. Or commenting out the entire handler function
+3. Or adding a check that only allows it to run once
+
 ### 8. Connect Integrations
 
 1. Open your deployed app
@@ -202,12 +207,16 @@ vercel dev
 
 ## 🔒 Security Features
 
-- **JWT Authentication**: All API endpoints verify Supabase JWT tokens
+- **JWT Authentication**: All API endpoints verify Supabase JWT tokens with expiration checks
 - **RLS Policies**: Row-level security in Supabase ensures data isolation
 - **Webhook Verification**: HMAC signature verification for Todoist webhooks
 - **Token Refresh**: Automatic refresh token handling for Google Calendar
 - **Server-side API Keys**: OpenAI and service role keys never exposed to client
 - **Environment Variables**: All secrets stored securely in Vercel
+- **Secure OAuth Flow**: Tokens stored in httpOnly cookies during OAuth callback
+- **Time-limited Temporary Tokens**: OAuth callback tokens expire in 5 minutes
+- **CSRF Protection**: State parameter validation in OAuth flows
+- **Setup Endpoint Protection**: Setup endpoint should be disabled after initial deployment
 
 ## 🎯 API Endpoints
 

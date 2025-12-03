@@ -14,28 +14,37 @@ function App() {
     const params = new URLSearchParams(window.location.search);
     
     // Handle Todoist OAuth callback
-    if (params.get('todoist_setup') === '1' && params.get('todoist_token')) {
-      const token = params.get('todoist_token');
-      handleTodoistSetup(token);
+    if (params.get('todoist_setup') === 'pending' && session) {
+      handleTodoistSetup();
       // Clean URL
       window.history.replaceState({}, '', '/');
     }
 
     // Handle Google OAuth callback
-    if (params.get('google_setup') === '1' && params.get('google_token')) {
-      const token = params.get('google_token');
-      const refreshToken = params.get('google_refresh');
-      const expiry = params.get('google_expiry');
-      handleGoogleSetup(token, refreshToken, expiry);
+    if (params.get('google_setup') === 'pending' && session) {
+      handleGoogleSetup();
       // Clean URL
       window.history.replaceState({}, '', '/');
     }
-  }, []);
+  }, [session]);
 
-  const handleTodoistSetup = async (token: string) => {
+  const handleTodoistSetup = async () => {
     if (!session) return;
 
     try {
+      // Get token from secure endpoint
+      const tokenResponse = await fetch('/api/todoist/get-temp-token', {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (!tokenResponse.ok) {
+        throw new Error('Failed to retrieve token');
+      }
+
+      const { token } = await tokenResponse.json();
+
       // Save Todoist integration
       const response = await fetch('/api/todoist/save-integration', {
         method: 'POST',
@@ -52,13 +61,27 @@ function App() {
       }
     } catch (error) {
       console.error('Failed to save Todoist integration:', error);
+      alert('Failed to connect Todoist. Please try again.');
     }
   };
 
-  const handleGoogleSetup = async (token: string, refreshToken: string | null, expiry: string | null) => {
+  const handleGoogleSetup = async () => {
     if (!session) return;
 
     try {
+      // Get tokens from secure endpoint
+      const tokensResponse = await fetch('/api/google/get-temp-tokens', {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (!tokensResponse.ok) {
+        throw new Error('Failed to retrieve tokens');
+      }
+
+      const { token, refresh_token, token_expiry } = await tokensResponse.json();
+
       // Save Google integration
       const response = await fetch('/api/google/save-integration', {
         method: 'POST',
@@ -68,8 +91,8 @@ function App() {
         },
         body: JSON.stringify({ 
           access_token: token,
-          refresh_token: refreshToken,
-          token_expiry: expiry,
+          refresh_token: refresh_token,
+          token_expiry: token_expiry,
         }),
       });
 
@@ -79,6 +102,7 @@ function App() {
       }
     } catch (error) {
       console.error('Failed to save Google integration:', error);
+      alert('Failed to connect Google Calendar. Please try again.');
     }
   };
 

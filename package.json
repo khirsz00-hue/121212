@@ -16,8 +16,7 @@
     "react-router-dom": "^6.20.0",
     "openai": "^4.24.0",
     "googleapis": "^129.0.0",
-    "jsonwebtoken": "^9.0.2",
-    "crypto": "^1.0.1"
+    "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1",

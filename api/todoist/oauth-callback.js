@@ -61,12 +61,15 @@ export default async function handler(req, res) {
 
     const userData = await userResponse.json();
     
-    // For now, we'll need the user to be logged in to Supabase
-    // In a real implementation, you'd maintain session state
-    // For this demo, redirect to a page where they can link their account
+    // Redirect to frontend with a success flag
+    // Frontend should use a secure POST endpoint to save the token
+    // This is a workaround - in production, use server-side session storage
+    const redirectUrl = `${baseUrl}/?todoist_setup=pending`;
     
-    // Store token temporarily in URL (in production, use proper session management)
-    const redirectUrl = `${baseUrl}/?todoist_token=${access_token}&todoist_setup=1`;
+    // Set a secure, httpOnly cookie with the token (expires in 5 minutes)
+    res.setHeader('Set-Cookie', [
+      `todoist_temp_token=${access_token}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=300`
+    ]);
     
     return res.redirect(redirectUrl);
     

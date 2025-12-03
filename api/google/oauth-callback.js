@@ -53,8 +53,21 @@ export default async function handler(req, res) {
     // Calculate token expiry
     const tokenExpiry = new Date(Date.now() + (expires_in * 1000)).toISOString();
 
-    // Redirect to frontend with token info (in production, use proper session management)
-    const redirectUrl = `${baseUrl}/?google_token=${access_token}&google_refresh=${refresh_token || ''}&google_expiry=${tokenExpiry}&google_setup=1`;
+    // Redirect to frontend with a success flag
+    // Set secure cookies with the tokens (expires in 5 minutes)
+    const cookies = [
+      `google_temp_token=${access_token}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=300`
+    ];
+    
+    if (refresh_token) {
+      cookies.push(`google_temp_refresh=${refresh_token}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=300`);
+    }
+    
+    cookies.push(`google_temp_expiry=${tokenExpiry}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=300`);
+    
+    res.setHeader('Set-Cookie', cookies);
+    
+    const redirectUrl = `${baseUrl}/?google_setup=pending`;
     
     return res.redirect(redirectUrl);
     
