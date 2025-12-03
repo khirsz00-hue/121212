@@ -1,0 +1,90 @@
+.calendar-assistant {
+  padding: 20px;
+}
+
+.calendar-assistant h2 {
+  margin: 0 0 24px 0;
+  font-size: 28px;
+  color: #1a202c;
+}
+
+.calendar-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.events-list h3 {
+  margin: 0 0 16px 0;
+  font-size: 20px;
+}
+
+.event-items {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.event-item {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  background: #f7fafc;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+  transition: all 0.3s;
+}
+
+.event-item:hover {
+  background: #edf2f7;
+  transform: translateX(4px);
+}
+
+.event-time {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 80px;
+  padding: 8px;
+  background: white;
+  border-radius: 6px;
+}
+
+.event-date {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.event-hour {
+  font-size: 16px;
+  color: #667eea;
+  font-weight: bold;
+}
+
+.event-content {
+  flex: 1;
+}
+
+.event-content h4 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  color: #1a202c;
+}
+
+.event-description {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.event-location {
+  font-size: 12px;
+  color: #667eea;
+  background: rgba(102, 126, 234, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
+}
